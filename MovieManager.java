@@ -108,7 +108,6 @@ public class MovieManager implements Serializable {
     public Reviewer addReviewer(int reviewerID, String name){
         Reviewer reviewer = null;
         try {
-            System.out.println("inserting into reviewer table..");
             String sql = "insert into reviewer values(" + reviewerID + ",'" + name + "')";
             Statement stmt = connection.createStatement();
             int nrows = stmt.executeUpdate(sql);
@@ -116,7 +115,6 @@ public class MovieManager implements Serializable {
                 reviewer = new Reviewer(reviewerID,name);
             }
             stmt.close();
-            System.out.println("Record inserted successfully..");
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -128,7 +126,6 @@ public class MovieManager implements Serializable {
         PreparedStatement pstmt = null;
         try{
             connection.setAutoCommit(false);
-            System.out.println("Opened database successfully");
             String query = "Update Reviewer set name = ? where reviewerID ='" + reviewerID + "'";
             pstmt = connection.prepareStatement(query);
             pstmt.setString(1,name);
@@ -140,7 +137,6 @@ public class MovieManager implements Serializable {
             System.err.println(e.getClass().getName() + ": " + e.getMessage());
             System.exit(0);
         }
-        System.out.println("Update Completed successfully");
     }
 
     public Rating consultRating(int reviewerID,int movieID){
@@ -161,7 +157,6 @@ public class MovieManager implements Serializable {
     public Rating addRating(int reviewerID, int movieID, int stars, LocalDate ratingDate){
         Rating rating = null;
         try {
-            System.out.println("inserting into reviewer table..");
             String sql = "insert into rating values(" + reviewerID + "," + movieID + "," + stars + ",'" + ratingDate + "')";
             Statement stmt = connection.createStatement();
             int nrows = stmt.executeUpdate(sql);
@@ -169,7 +164,6 @@ public class MovieManager implements Serializable {
                 rating = new Rating(reviewerID,movieID,stars, ratingDate);
             }
             stmt.close();
-            System.out.println("Record inserted successfully..");
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -180,7 +174,6 @@ public class MovieManager implements Serializable {
         PreparedStatement pstmt = null;
         try{
             connection.setAutoCommit(false);
-            System.out.println("Opened database successfully");
             String query = "Update rating set stars = ? where reviewerID ='" + reviewerID + "' and movieID = '" + movieID + "'";
             pstmt = connection.prepareStatement(query);
             pstmt.setString(1, String.valueOf(stars));
@@ -192,6 +185,5 @@ public class MovieManager implements Serializable {
             System.err.println(e.getClass().getName() + ": " + e.getMessage());
             System.exit(0);
         }
-        System.out.println("Update Completed successfully");
     }
 }
