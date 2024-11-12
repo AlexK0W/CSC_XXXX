@@ -19,9 +19,6 @@ public class MovieManager implements Serializable {
         Connection connection = null;
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
-            //jdbc:mysql://<dbhost>:<dbport>/dbname
-
-            //root Tnight2Sky@1stEarth
             connection = DriverManager.getConnection(url, userName, password);
         } catch (Exception e) {
             e.printStackTrace();
