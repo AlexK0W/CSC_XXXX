@@ -11,9 +11,9 @@ public class Test {
 
     public static void MovieManagerTester() throws SQLException, ClassNotFoundException {
         MovieManager m = new MovieManager("root","Tnight2Sky@1stEarth","jdbc:mysql://localhost:3306/moviedb");
-        m.addMovie(225,"The Thing",1989,"Me");
+        m.addMovie(226,"The Thing",1989,"Me");
         System.out.println(m.consultMovie("The Thing").toString());
-        m.updateMovie(225,"The Thing 34",2003,"me and u");
+        m.updateMovie(226,"The Thing 34",2003,"me and u");
         m.closeConnection();
     }
     public static void ReviewerTester() throws SQLException, ClassNotFoundException {
