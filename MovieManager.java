@@ -5,90 +5,89 @@ import java.io.Serializable;
 import java.sql.*;
 import java.time.LocalDate;
 
+import java.util.logging.Logger;
+import java.util.logging.Level;
 
 public class MovieManager implements Serializable {
 
-    Connection connection = null;
+    private static final Logger logger = Logger.getLogger(MovieManager.class.getName());
+    private final Connection connection;
 
-    public MovieManager(String userName, String password, String url) {
-        connection=getConnection( userName, password, url);
+    public MovieManager(String userName, String password, String url) throws SQLException, ClassNotFoundException {
+        this.connection = getConnection(userName, password, url);
     }
 
-    public Connection getConnection(String userName, String password, String url) {
-        Connection connection = null;
+    private Connection getConnection(String userName, String password, String url) throws SQLException, ClassNotFoundException {
+        Class.forName("com.mysql.cj.jdbc.Driver");
+        return DriverManager.getConnection(url, userName, password);
+    }
+
+    public void closeConnection() {
         try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            connection = DriverManager.getConnection(url, userName, password);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return connection;
-    }
-
-
-    public void CloseConnection(){
-        try {
-            connection.close();
-        }catch (Exception e){
-            System.err.println(e.getClass().getName() + ": " + e.getMessage());
-        }
-    }
-
-    public Movie consultMovie(String movieName){
-        Movie movie = null;
-        try{
-            String sql = "select * from movie m where m.title='" + movieName + "'";
-            Statement stmt = connection.createStatement();
-            ResultSet rset = stmt.executeQuery(sql);
-            while(rset.next()){
-                movie = new Movie(rset.getInt("movieID"), rset.getNString("title"),rset.getInt("year"),rset.getNString("director"));
+            if (connection != null && !connection.isClosed()) {
+                connection.close();
             }
-            rset.close();
-            stmt.close();
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (SQLException e) {
+            logger.log(Level.SEVERE, "Error closing connection", e);
         }
-        return movie;
+    }
+    public Movie consultMovie(String movieName) {
+        String sql = "SELECT * FROM movie WHERE title = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, movieName);
+            try (ResultSet rset = stmt.executeQuery()) {
+                if (rset.next()) {
+                    return new Movie(rset.getInt("movieID"), rset.getString("title"),
+                            rset.getInt("year"), rset.getString("director"));
+                }
+            }
+        } catch (SQLException e) {
+            logger.log(Level.SEVERE, "Error consulting movie", e);
+        }
+        return null;
     }
 
     public Movie addMovie(int movieID, String title, int year, String director) {
-        Movie movie = null;
-        try {
-            System.out.println("inserting into movie table..");
-            String sql = "insert into movie values(" + movieID + ",'" + title + "'," + year + ",'" + director + "')";
-            Statement stmt = connection.createStatement();
-            int nrows = stmt.executeUpdate(sql);
-            if (nrows != -1) {
-                movie = new Movie(movieID, title, year, director);
+        String sql = "INSERT INTO movie (movieID, title, year, director) VALUES (?, ?, ?, ?)";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setInt(1, movieID);
+            stmt.setString(2, title);
+            stmt.setInt(3, year);
+            stmt.setString(4, director);
+            if (stmt.executeUpdate() > 0) {
+                logger.info("Movie inserted successfully");
+                return new Movie(movieID, title, year, director);
             }
-            stmt.close();
-            System.out.println("Record inserted successfully..");
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (SQLException e) {
+            logger.log(Level.SEVERE, "Error adding movie", e);
         }
-        return movie;
+        return null;
     }
-
-
-    public void updateMovie(int movieID, String title, int year, String director){
-        PreparedStatement pstmt = null;
-        try {
+    public void updateMovie(int movieID, String title, int year, String director) {
+        String sql = "UPDATE movie SET title = ?, year = ?, director = ? WHERE movieID = ?";
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
             connection.setAutoCommit(false);
-            System.out.println("Opened database successfully");
-            String query = "Update Movie set title = ?, year=?, director=? where movieID ='" + movieID + "'";
-            pstmt = connection.prepareStatement(query);
             pstmt.setString(1, title);
             pstmt.setInt(2, year);
             pstmt.setString(3, director);
+            pstmt.setInt(4, movieID);
             pstmt.executeUpdate();
             connection.commit();
-            pstmt.close();
-            connection.setAutoCommit(true);
-        } catch (Exception e) {
-            System.err.println(e.getClass().getName() + ": " + e.getMessage());
-            System.exit(0);
+            logger.info("Movie updated successfully");
+        } catch (SQLException e) {
+            try {
+                connection.rollback();
+            } catch (SQLException rollbackEx) {
+                logger.log(Level.SEVERE, "Error rolling back transaction", rollbackEx);
+            }
+            logger.log(Level.SEVERE, "Error updating movie", e);
+        } finally {
+            try {
+                connection.setAutoCommit(true);
+            } catch (SQLException e) {
+                logger.log(Level.SEVERE, "Error setting auto-commit", e);
+            }
         }
-        System.out.println("Update Completed successfully");
     }
 
     public Reviewer consultReviewer(String name){
