@@ -1,20 +1,20 @@
 package MVBE;
 
 public class Reviewer {
-    private int reveiwerID;
+    private int reviewerID;
     private String name;
 
-    public Reviewer(int reveiwerID, String name) {
-        this.reveiwerID = reveiwerID;
+    public Reviewer(int reviewerID, String name) {
+        this.reviewerID = reviewerID;
         this.name = name;
     }
 
-    public int getReveiwerID() {
-        return reveiwerID;
+    public int getReviewerID() {
+        return reviewerID;
     }
 
-    public void setReveiwerID(int reveiwerID) {
-        this.reveiwerID = reveiwerID;
+    public void setReviewerID(int reviewerID) {
+        this.reviewerID = reviewerID;
     }
 
     public String getName() {
@@ -28,7 +28,7 @@ public class Reviewer {
     @Override
     public String toString() {
         return "Reviewer{" +
-                "reveiwerID=" + reveiwerID +
+                "reviewerID=" + reviewerID +
                 ", name='" + name + '\'' +
                 '}';
     }

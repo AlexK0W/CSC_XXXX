@@ -4,7 +4,6 @@ package MVBE;
 import java.io.Serializable;
 import java.sql.*;
 import java.time.LocalDate;
-import java.util.Date;
 
 
 public class MovieManager implements Serializable {
