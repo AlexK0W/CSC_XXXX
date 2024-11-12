@@ -1,6 +1,6 @@
 ## MVBE: Movie Database Management
 
-This package provides a Java class, `MovieManager`, for interacting with a movie database. It allows you to connect to a MySQL database, perform CRUD (Create, Read, Update, Delete) operations on movies, reviewers, and ratings.
+This package provides a Java class, `MovieManager`, for interacting with a movie database. It allows you to connect to a MySQL database, perform CRUD (Create, Read, Update) operations on movies, reviewers, and ratings.
 
 ### Features
 
@@ -21,6 +21,7 @@ This package provides a Java class, `MovieManager`, for interacting with a movie
 
   * Java installed
   * MySQL database server with relevant tables (movie, reviewer, rating)
+  * Java connector for MySQL 8.0.40
 
 **Using the `MovieManager` class:**
 
