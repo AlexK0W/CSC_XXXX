@@ -10,7 +10,11 @@ public class Test {
     }
 
     public static void MovieManagerTester() throws SQLException, ClassNotFoundException {
+<<<<<<< Updated upstream
         MovieManager m = new MovieManager("root","Tnight2Sky@1stEarth","jdbc:mysql://Pheggiger-1:3306/moviedb");
+=======
+        MovieManager m = new MovieManager("root","Tnight2Sky@1stEarth","jdbc:mysql://Phigge:3306/moviedb");
+>>>>>>> Stashed changes
         m.addMovie(226,"The Thing",1989,"Me");
         System.out.println(m.consultMovie("The Thing").toString());
         m.updateMovie(226,"The Thing 34",2003,"me and u");

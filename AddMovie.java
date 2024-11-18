@@ -1,4 +1,6 @@
-package Presentation;
+package MVBE;
+
+import MVBE.MovieManager;
 
 import javax.swing.*;
 import java.awt.*;
